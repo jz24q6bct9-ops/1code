@@ -9,6 +9,9 @@ import sys
 import argparse
 from pathlib import Path
 
+# Supported image file extensions
+SUPPORTED_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.exr', '.tiff', '.tif'}
+
 
 def parse_arguments():
     """
@@ -76,7 +79,7 @@ def process_frames(frames_dir, fps):
         # Get list of frame files
         frame_files = sorted([
             f for f in frames_path.iterdir()
-            if f.is_file() and f.suffix.lower() in {'.png', '.jpg', '.jpeg', '.exr', '.tiff', '.tif'}
+            if f.is_file() and f.suffix.lower() in SUPPORTED_EXTENSIONS
         ])
         
         if not frame_files:
@@ -99,10 +102,11 @@ def process_frames(frames_dir, fps):
         print(f"  Frames directory: {frames_path.absolute()}")
         print(f"  FPS: {fps}")
         
-        # List available frames even without Blender
-        frame_files = list(frames_path.glob('*.*'))
+        # List available frames even without Blender (filter by supported extensions)
+        frame_files = [f for f in frames_path.iterdir() if f.is_file() and f.suffix.lower() in SUPPORTED_EXTENSIONS]
         if frame_files:
-            print(f"  Found {len(frame_files)} files in directory")
+            print(f"  Found {len(frame_files)} image files in directory")
+            print(f"  Supported formats: {', '.join(sorted(SUPPORTED_EXTENSIONS))}")
 
 
 def main():
